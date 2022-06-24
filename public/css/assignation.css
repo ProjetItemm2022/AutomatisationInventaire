@@ -1,0 +1,240 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.flex {
+    display: flex;
+}
+
+.header {
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ebebeb;
+    margin-bottom: 10em;
+}
+
+.menu {
+    margin-right: 0.5em;
+}
+
+.header > img {
+    margin-left: 0.5em;
+}
+
+.arrow {
+    border: 0;
+    transform: scale(1.7);
+    margin: 30px;
+    width: 20px;
+    height: 32px;
+    flex-grow: 0;
+    -webkit-transform: scale(1.7);
+    -moz-transform: scale(1.7);
+    -ms-transform: scale(1.7);
+    -o-transform: scale(1.7);
+}
+.right {
+
+    background-color: #459950;
+    clip-path: polygon(0 0, 0 100%, 100% 50%);
+}
+
+.left {
+    background-color: #706a6a;
+    clip-path: polygon(100% 100%, 100% 0, 0 50%);
+}
+
+.control{
+    flex-grow: 0;
+}
+
+.toggle-label {
+    position: relative;
+    display: block;
+    width: 200px;
+    height: 60px;
+    margin-top: 8px;
+    border: 1px solid #808080;
+  }
+
+  .toggle-label input[type=checkbox] {
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+  .toggle-label input[type=checkbox]+.back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: white;
+    transition: background 150ms linear;
+    -webkit-transition: background 150ms linear;
+    -moz-transition: background 150ms linear;
+    -ms-transition: background 150ms linear;
+    -o-transition: background 150ms linear;
+}
+
+  .toggle-label input[type=checkbox]:checked+.back {
+
+    background: white;
+  }
+
+  .toggle-label input[type=checkbox]+.back .toggle {
+    display: block;
+    position: absolute;
+    content: ' ';
+    background: #fff;
+    width: 50%;
+    height: 100%;
+    transition: margin 150ms linear;
+    border: 1px solid #808080;
+    border-radius: 0;
+  }
+
+  .toggle-label input[type=checkbox]:checked+.back .toggle {
+    margin-left: 100px;
+  }
+
+  .toggle-label .label {
+    display: block;
+    position: absolute;
+    width: 50%;
+    color: #808080;
+    line-height: 60px;
+    text-align: center;
+    font-size: 2em;
+  }
+  .toggle-label .label.on { left: 0px; }
+
+  .toggle-label .label.off { right: 0px; }
+
+  .toggle-label input[type=checkbox]:checked+.back .label.on {
+    opacity: 0.4;
+
+  }
+
+  .toggle-label input[type=checkbox]+.back .label.off {
+    color: red;
+    opacity: 0.2;
+  }
+
+  .toggle-label input[type=checkbox]:checked+.back .label.off {
+    color: red;
+    opacity: 1;
+  }
+
+/* Sidenav menu */
+.sidenav {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: -250px;
+    background-color: #e8e8e8;
+    padding-top: 60px;
+    transition: left 0.5s ease;
+  }
+
+
+/* Sidenav menu links */
+.sidenav a {
+padding: 8px 8px 8px 32px;
+text-decoration: none;
+font-size: 25px;
+color: #818181;
+display: block;
+transition: 0.3s;
+}
+
+.sidenav a:hover {
+color: #111;
+}
+
+.sidenav ul {
+list-style-type: none;
+padding: 0;
+margin: 0;
+}
+
+
+#menu__toggle {
+opacity: 0;
+}
+#menu__toggle:checked + .menu__btn > span {
+transform: rotate(45deg);
+}
+#menu__toggle:checked + .menu__btn > span::before {
+top: 0;
+transform: rotate(0deg);
+}
+#menu__toggle:checked + .menu__btn > span::after {
+top: 0;
+transform: rotate(90deg);
+}
+#menu__toggle:checked ~ .menu__box {
+right: 0 !important;
+}
+.menu__btn {
+position: fixed;
+top: 20px;
+right: 20px;
+width: 50px;
+height: 50px;
+cursor: pointer;
+z-index: 2;
+}
+.menu__btn > span,
+.menu__btn > span::before,
+.menu__btn > span::after {
+display: block;
+position: absolute;
+width: 100%;
+height: 2px;
+background-color: #616161;
+transition-duration: .25s;
+}
+.menu__btn > span::before {
+content: '';
+top: -8px;
+}
+.menu__btn > span::after {
+content: '';
+top: 8px;
+}
+.menu__box {
+display: block;
+position: fixed;
+top: 0;
+right: -100%;
+width: 300px;
+height: 100%;
+margin: 0;
+padding: 80px 0;
+list-style: none;
+background-color: #ECEFF1;
+box-shadow: 2px 2px 6px rgba(0, 0, 0, .4);
+transition-duration: .25s;
+z-index: 1;
+}
+.menu__item {
+display: block;
+padding: 12px 24px;
+color: #333;
+font-family: 'Roboto', sans-serif;
+font-size: 20px;
+font-weight: 600;
+text-decoration: none;
+transition-duration: .25s;
+}
+.menu__item:hover {
+background-color: #CFD8DC;
+}
+
+
+
+

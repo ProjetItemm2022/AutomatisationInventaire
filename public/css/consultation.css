@@ -1,0 +1,40 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.flex{
+    display: flex;
+
+}
+
+.header{
+    justify-content: space-between;
+    align-items: center;
+    background-color: #EBEBEB;
+    margin-bottom: 10em;
+}
+
+.header > button{
+    margin-right: 1em;
+}
+
+.header > img{
+    margin-left: 0.5em;
+}
+
+.arrow{
+    width: 20px;
+    height: 32px;
+    background-color: #e888a3;
+}
+.right{
+    clip-path: polygon(0 0, 0 100%, 100% 50%);
+}
+
+.left{
+    clip-path: polygon(100% 100%, 100% 0, 0 50%);
+}
+
+

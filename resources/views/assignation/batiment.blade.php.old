@@ -1,0 +1,35 @@
+@extends('assignation/layouts')
+
+@push('title')
+    Délimitation des batiments
+@endpush
+
+@push('head')
+    <script src="{{ asset('js/assignationBatiment.js') }}" defer type="module"></script>
+@endpush
+
+@push('Explanation')
+    <div>
+        <h1>Délimitation des bâtiments</h1>
+        <h3>Veuillez dessiner les bâtiments de stockages, après chaque forme dessinez le nom du bâtiment sera demandé</h3>
+    </div>
+@endpush
+
+@push('assignationType')
+    <div>
+        <h2>Veuillez dessiner le batiment :</h2>
+        <br>
+        <h3 id="batimentADessiner"></h3>
+    </div>
+@endpush
+
+
+@push('modal-body')
+    <label for="name-select"> <h2>Veuillez choisir le nom du batiment</h2></label>
+    <select id="select-batiment" class="form-select">
+    </select>
+@endpush
+
+@push('modal-title')
+    Choix du nom des Batiments
+@endpush

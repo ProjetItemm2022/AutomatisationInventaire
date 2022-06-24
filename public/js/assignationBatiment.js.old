@@ -1,0 +1,339 @@
+//recuperer le token de session
+const csrfToken = document.head.querySelector(
+    "[name~=csrf-token][content]"
+).content;
+
+//fonction pour stocker des données dans le stockage de session
+const storeInSessionStorage = (key, element) =>
+    sessionStorage.setItem(key, JSON.stringify(element));
+
+//fonction pour récuper des données dans le stockage de session
+const getInSessionStorage = (key) => JSON.parse(sessionStorage.getItem(key));
+
+//Fonction pour récupérer des données à une URL donnée en parametre
+const getData = async (url) => {
+    const request = await fetch(url).catch((err) => console.log(err));
+    if (request.status === 200) {
+        return request.json();
+    } else return null;
+};
+
+//fonction qui prend en parametre l'id d'un batiment et qui supprimera son match id/batiment
+const deleteMatch = (id) => {
+    let batiment;
+    let index;
+    matchFabricObject.forEach((element, indexElement) => {
+        if (element.idFabric === id) {
+            batiment = element;
+            index = indexElement;
+        }
+    });
+    matchFabricObject.splice(index, 1);
+    return batiment;
+};
+
+//fonction pour générer un id aléatoire
+const generateID = () => {
+    let arrayId = new Uint32Array(1);
+    window.crypto.getRandomValues(arrayId);
+    return parseInt(arrayId.join(""), 10);
+};
+
+//fonction qui prend en parametre une node d'élement select et un array, qui populera le select avec les éléments de l'array
+const populateSelect = (select, arr) => {
+    while (select.firstChild) {
+        select.removeChild(select.firstChild);
+    }
+    arr.forEach((element) => {
+        let option = document.createElement("option");
+        option.setAttribute("value", element);
+        option.appendChild(document.createTextNode(element));
+        select.appendChild(option);
+    });
+};
+
+const closePoly = document.querySelector(".closePoly");
+const CheckBoxToggleDrawOrErase = document.querySelector(".inputToggleDraw");
+const CheckBoxToggleDrawMode = document.querySelector(".inputToggleDrawMode");
+const saveButton = document.querySelector(".enregistrer");
+const modal = new bootstrap.Modal(document.getElementById("modal"));
+const selectBatiment = document.querySelector("#select-batiment");
+const modalBtn = document.querySelector("#modalBtn");
+
+let rect,
+    polygon,
+    isDown,
+    origX,
+    origY,
+    pointer,
+    line,
+    originPointer,
+    modeDessin = "rect",
+    polygonMode,
+    pointArray = [],
+    circleObjectArray = [],
+    lineObjectArray = [],
+    fabricObject = [],
+    isDrawingPolygon = false,
+    deleteModeEnable = false,
+    isObjectSelected = false,
+    bgIMGCanvas,
+    matchFabricObject = [],
+    buildingLeft = [],
+    idLeft = [],
+    fileIndex = parseInt(window.location.href.split("/").pop(), 10);
+//canvas de dessin
+const canvas = new fabric.Canvas("canvasDessin");
+
+//canvas du dessin précedemment déssiné si il existe
+const previousCanvas = (await getData("../get/canvasglobal")) ?? [];
+
+//recuperer les batiment (id et nom)
+const Batiment = await getData("../batiment/nom");
+
+
+const nomBatiment = Batiment.map((B) => B.nom);
+
+const idBatiment = Batiment.map((B) => B.id);
+
+//si une canvas précédente existe rajouté ces élément à la convas actuelle
+//dans le cas contraire ajouté le background à la canvas
+if (previousCanvas === null) {
+    fabric.Image.fromURL(`./plan/0PlanGeneral.png`, function (oImg) {
+        buildingLeft = nomBatiment;
+        idLeft = idBatiment;
+        saveButton.disabled = true;
+        populateSelect(selectBatiment, buildingLeft);
+        canvas.setBackgroundImage(oImg, canvas.renderAll.bind(canvas), {
+            scaleX: canvas.width / oImg.width,
+            scaleY: canvas.height / oImg.height,
+        });
+
+    });
+}
+else {
+    canvas.loadFromJSON(previousCanvas, () => {
+        previousCanvas.objects.forEach((o)=>{
+            let id = o.id;
+            let batiment = Batiment.find(element => element.id === id);
+            matchFabricObject.push({
+                batiment: batiment.nom,
+                idFabric: id,
+            });
+            populateSelect(selectBatiment, buildingLeft);
+        })
+        canvas.renderAll();
+    });
+}
+
+modalBtn.addEventListener("click", () => {
+    //recuperer l'index du batiment
+    let index = buildingLeft.indexOf(selectBatiment.value);
+    //ajouté le match id/batiment
+    if (modeDessin === "poly") {
+        polygon.id = idLeft[index];
+        matchFabricObject.push({
+            batiment: selectBatiment.value,
+            idFabric: polygon.id,
+        });
+
+    } else {
+        rect.id = idLeft[index];
+        matchFabricObject.push({
+            batiment: selectBatiment.value,
+            idFabric: rect.id,
+        });
+    }
+    //supprimé le batiment et l'id du restant
+    buildingLeft.splice(index, 1);
+    idLeft.splice(index, 1);
+    populateSelect(selectBatiment, buildingLeft);
+    modal.toggle();
+    if (buildingLeft.length === 0) {
+        saveButton.disabled = false;
+    }
+});
+
+closePoly.addEventListener("click", () => drawPolygon());
+
+CheckBoxToggleDrawOrErase.addEventListener(
+    "change",
+    (e) => (deleteModeEnable = e.target.checked ? true : false)
+);
+
+CheckBoxToggleDrawMode.addEventListener(
+    "change",
+    (e) => (modeDessin = e.target.checked ? "poly" : "rect")
+);
+
+saveButton.addEventListener("click", () => {
+    fetch("../assignation/store/planglobal", {
+        method: "PUT",
+        body: JSON.stringify(canvas.toJSON(["id"])),
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json, text-plain, */*",
+            "X-CSRF-Token": csrfToken,
+            "X-Requested-With": "XMLHttpRequest",
+        },
+    })
+        .finally((response) => window.location.replace("../"))
+        .catch((err) => console.log(err));
+});
+
+//fonction pour ajouté un point pour le polygone
+const addPoint = (o) => {
+    let pointer = canvas.getPointer(o.e);
+    let circle = new fabric.Circle({
+        radius: 6,
+        fill: "rgba(255,0,0,0.5)",
+        opacity: 0.4,
+        stroke: "#333333",
+        strokeWidth: 0.5,
+        left: pointer.x,
+        top: pointer.y,
+        selectable: false,
+        hasBorders: false,
+        hasControls: false,
+        originX: "center",
+        originY: "center",
+    });
+    circleObjectArray.push(circle);
+    canvas.add(circle);
+    if (pointArray.length != 0) {
+        let linePoint = [
+            pointer.x,
+            pointer.y,
+            pointArray.at(-1).x,
+            pointArray.at(-1).y,
+        ];
+        line = new fabric.Line(linePoint, {
+            strokeWidth: 2,
+            fill: "#999999",
+            stroke: "#999999",
+            class: "line",
+            originX: "center",
+            originY: "center",
+            selectable: false,
+            hasBorders: false,
+            hasControls: false,
+            evented: false,
+        });
+        canvas.add(line);
+        lineObjectArray.push(line);
+    }
+    pointArray.push({ x: pointer.x, y: pointer.y });
+};
+
+//fonction pour dessiner un polygon
+const drawPolygon = () => {
+    if (pointArray.length > 2 && buildingLeft.length) {
+        polygon = new fabric.Polygon(pointArray, {
+            stroke: "#333333",
+            strokeWidth: 1,
+            fill: "rgba(255,0,0,0.5)",
+            hasControls: false,
+            id: generateID(),
+        });
+
+        fabricObject.push(polygon);
+        canvas.add(polygon);
+
+        circleObjectArray.forEach((element) => {
+            canvas.remove(element);
+        });
+        lineObjectArray.forEach((element) => {
+            canvas.remove(element);
+        });
+        //vidé les différents array relatif au polygone
+        circleObjectArray = [];
+        lineObjectArray = [];
+        pointArray = [];
+        modal.toggle();
+    }
+};
+
+//évenement sur lequel ce base les fonction de suppresion d'élément
+canvas.on("before:transform", () => {
+    isObjectSelected = true;
+    if (deleteModeEnable) {
+        canvas.getActiveObjects().forEach((obj) => {
+            let matchSupprimé = deleteMatch(obj.id);
+            buildingLeft.push(matchSupprimé.batiment);
+            idLeft.push(matchSupprimé.idFabric);
+            console.log(buildingLeft)
+            populateSelect(selectBatiment, buildingLeft);
+            canvas.remove(obj);
+        });
+        canvas.discardActiveObject().renderAll();
+        saveButton.disabled = true;
+    }
+});
+
+canvas.on("before:selection:cleared", () => {
+    isObjectSelected = false;
+});
+
+canvas.on("mouse:down", (o) => {
+    if (!isObjectSelected && !deleteModeEnable && buildingLeft.length) {
+        if (modeDessin === "rect") {
+            originPointer = canvas.getPointer(o.e);
+            origX = originPointer.x;
+            origY = originPointer.y;
+            isDown = true;
+            rect = new fabric.Rect({
+                left: origX,
+                top: origY,
+                originX: "left",
+                originY: "top",
+                width: 0,
+                height: 0,
+                angle: 0,
+                stroke: "#333333",
+                strokeWidth: 1,
+                fill: "rgba(255,0,0,0.5)",
+                transparentCorners: false,
+            });
+            fabricObject.push(rect);
+            canvas.add(rect);
+        } else {
+            addPoint(o);
+        }
+    }
+});
+
+//ajuster la preview d'un rectangle au mouvement du curseur
+canvas.on("mouse:move", (o) => {
+    if (!isObjectSelected && !deleteModeEnable && modeDessin === "rect") {
+        if (!isDown) return;
+
+        pointer = canvas.getPointer(o.e);
+
+        if (origX > pointer.x) {
+            rect.set({ left: Math.abs(pointer.x) });
+        }
+        if (origY > pointer.y) {
+            rect.set({ top: Math.abs(pointer.y) });
+        }
+
+        rect.set({ width: Math.abs(origX - pointer.x) });
+        rect.set({ height: Math.abs(origY - pointer.y) });
+
+        canvas.renderAll();
+    }
+});
+
+canvas.on("mouse:up", () => {
+    if (buildingLeft.length){
+        if (!isObjectSelected && !deleteModeEnable && modeDessin === "rect") {
+            isDown = false;
+            if (rect.width < 20 && rect.height < 20) {
+                canvas.remove(rect);
+            } else {
+                if (buildingLeft.length) {
+                    modal.toggle();
+                }
+            }
+        }
+    }
+});

@@ -1,0 +1,346 @@
+const fileName = [
+    "1rdc.png",
+    "2Brahms.png",
+    "3Debussy.png",
+    "4Gershwin.png",
+    "5Haendel.png",
+    "6Pape.png",
+    "7Sax.png",
+    "8Torres.png",
+];
+
+const csrfToken = document.head.querySelector("[name~=csrf-token][content]").content;
+
+const storeInSessionStorage = (key, element) =>
+    sessionStorage.setItem(key, JSON.stringify(element));
+
+const getInSessionStorage = (key) => JSON.parse(sessionStorage.getItem(key));
+
+const getData = async (url) => {
+    const request = await fetch(url).catch((err) => console.log(err));
+    if (request.status === 200) {
+        return request.json();
+    } else return null;
+};
+
+const deleteMatch = (id)=>{
+    let salle;
+    let index
+    matchObjectSalle.forEach((element,indexElement)=>{
+        if (element.idFabric === id){
+
+            salle = element.salle;
+            index = indexElement;
+        }
+    })
+    matchObjectSalle.splice(index,1);
+    return salle;
+}
+
+const generateID = ()=>{
+    let arrayId = new Uint32Array(1);
+    window.crypto.getRandomValues(arrayId);
+    return parseInt(arrayId.join(''),10);
+};
+
+const saveCanvas = ()=>{
+    canvases[fileIndex] = canvas.toJSON(["id"]);
+    FabricObjectsAll[fileIndex] = fabricObject;
+    matchObjectSalleAll[fileIndex] = matchObjectSalle;
+    storeInSessionStorage("canvasesSalle",canvases);
+    storeInSessionStorage("objectSalle",FabricObjectsAll);
+    storeInSessionStorage("matchSalle",matchObjectSalleAll);
+    canvasesPng[fileIndex] = canvas.getObjects().map(el =>{
+        canvas.getObjects().forEach(el => el.visible = false);
+        el.visible = true;
+        canvas.renderAll();
+        return canvas.toDataURL({
+            width: canvas.width,
+            height: canvas.height,
+            left: 0,
+            top: 0,
+            format: 'png',
+        });
+    })
+    storeInSessionStorage('pngSalle',canvasesPng);
+}
+
+const drawPolygon = () => {
+    if (pointArray.length > 2){
+        polygon = new fabric.Polygon(pointArray, {
+            stroke: "#333333",
+            strokeWidth: 1,
+            fill: "rgba(255,0,0,0.5)",
+            hasControls: false,
+            id:generateID(),
+        });
+
+        fabricObject.push(polygon.toJSON(['id']))
+
+        canvas.add(polygon);
+
+        circleObjectArray.forEach((element) => {
+            canvas.remove(element);
+        });
+
+        lineObjectArray.forEach((element) => {
+            canvas.remove(element);
+        });
+
+        circleObjectArray = [];
+        lineObjectArray = [];
+        pointArray = [];
+        modal.toggle();
+    }
+
+
+};
+
+const closePoly = document.querySelector(".closePoly");
+const CheckBoxToggleDrawOrErase = document.querySelector(".inputToggleDraw");
+const CheckBoxToggleDrawMode = document.querySelector(".inputToggleDrawMode");
+const saveButton = document.querySelector(".enregistrer");
+const modal = new bootstrap.Modal(document.getElementById('modal'))
+const inputSalle = document.querySelector('#inputSalle');
+const modalBtn = document.querySelector('#modalBtn');
+const arrowNext = document.querySelector("#arrowNext");
+const arrowPrevious = document.querySelector("#arrowPrevious");
+const fileIndex = parseInt(window.location.href.split("/").pop()) -1;
+const canvas = new fabric.Canvas("canvasDessin");
+const canvases = await getInSessionStorage("canvasesSalle") ?? [];
+const FabricObjectsAll = await getInSessionStorage("objectSalle") ?? [];
+const matchObjectSalleAll = await getInSessionStorage("matchSalle") ?? [];
+const canvasesPng = await getInSessionStorage("pngSalle") ?? [];
+
+let rect,
+    polygon,
+    isDown,
+    origX,
+    origY,
+    pointer,
+    line,
+    originPointer,
+    modeDessin = "rect",
+    polygonMode,
+    pointArray = [],
+    circleObjectArray = [],
+    lineObjectArray = [],
+    fabricObject = FabricObjectsAll[fileIndex] ?? [],
+    isDrawingPolygon = false,
+    deleteModeEnable = false,
+    isObjectSelected = false,
+    bgIMGCanvas,
+    matchObjectSalle = matchObjectSalleAll[fileIndex] ?? [],
+    nomSalle = [];
+
+if (canvases[fileIndex] === undefined || canvases[fileIndex]===null){
+    fabric.Image.fromURL(`../plan/${fileName[fileIndex]}`, function (oImg) {
+        canvas.setBackgroundImage(oImg, canvas.renderAll.bind(canvas), {
+            scaleX: canvas.width / oImg.width,
+            scaleY: canvas.height / oImg.height
+         });
+
+    });
+}
+else{
+    canvas.loadFromJSON(canvases[fileIndex], ()=>canvas.renderAll())
+}
+
+
+if(arrowNext){
+    arrowNext.addEventListener("click",()=>{
+        saveCanvas();
+        window.location.href= `./${(fileIndex+2)}`;
+    })
+}
+
+if(arrowPrevious){
+    arrowPrevious.addEventListener("click",()=>{
+        saveCanvas();
+        window.location.href= `./${(fileIndex)}`
+
+    })
+}
+
+if (saveButton){
+    saveButton.addEventListener("click", () => {
+        saveCanvas();
+        console.log(matchObjectSalleAll);
+        let data = canvasesPng.map((el,i)=>{
+            return el.map((el,index)=>{
+                let id = FabricObjectsAll[i][index].id;
+                // r sera l'index du match id
+                let r = matchObjectSalleAll[i].findIndex(e=>e.idFabric===id);
+                let obj = {'png' : el, 'json' : FabricObjectsAll[i][index], 'nom' :matchObjectSalleAll[i][r].nom, 'id' : matchObjectSalleAll[i][r].idBatiment}
+                return obj;
+            })
+        })
+        console.log(data);
+        fetch('../store/salle',{
+            method:'PUT',
+            body:JSON.stringify(data),
+            headers:{
+                'Content-Type': 'application/json',
+                "Accept": "application/json, text-plain, */*",
+                "X-CSRF-Token": csrfToken,
+                "X-Requested-With": "XMLHttpRequest",
+            }
+        }).then(response => location.href = '../').catch(err=>console.log(err))
+    });
+}
+
+modalBtn.addEventListener("click", ()=>{
+    if (!matchObjectSalle.some(el=> el.nom ===inputSalle.value)){
+        switch (modeDessin) {
+            case 'poly':
+                matchObjectSalle.push({nom: inputSalle.value, idFabric : polygon.id, idBatiment : fileIndex+1})
+                break;
+
+            case 'rect':
+                matchObjectSalle.push({nom: inputSalle.value, idFabric : rect.id, idBatiment : fileIndex+1})
+                break;
+        }
+        modal.toggle();
+        inputSalle.value = null;
+    }
+})
+
+closePoly.addEventListener("click", () => drawPolygon());
+
+CheckBoxToggleDrawOrErase.addEventListener(
+    "change",
+    (e) => (deleteModeEnable = e.target.checked ? true : false)
+);
+
+CheckBoxToggleDrawMode.addEventListener(
+    "change",
+    (e) => (modeDessin = e.target.checked ? "poly" : "rect")
+);
+
+const addPoint = (o) => {
+    let pointer = canvas.getPointer(o.e);
+    let circle = new fabric.Circle({
+        radius: 6,
+        fill: "rgba(255,0,0,0.5)",
+        opacity: 0.4,
+        stroke: "#333333",
+        strokeWidth: 0.5,
+        left: pointer.x,
+        top: pointer.y,
+        selectable: false,
+        hasBorders: false,
+        hasControls: false,
+        originX: "center",
+        originY: "center",
+    });
+    circleObjectArray.push(circle);
+    canvas.add(circle);
+    if (pointArray.length != 0) {
+        let linePoint = [
+            pointer.x,
+            pointer.y,
+            pointArray.at(-1).x,
+            pointArray.at(-1).y,
+        ];
+        line = new fabric.Line(linePoint, {
+            strokeWidth: 2,
+            fill: "#999999",
+            stroke: "#999999",
+            class: "line",
+            originX: "center",
+            originY: "center",
+            selectable: false,
+            hasBorders: false,
+            hasControls: false,
+            evented: false,
+        });
+        canvas.add(line);
+        lineObjectArray.push(line);
+    }
+
+    pointArray.push({ x: pointer.x, y: pointer.y });
+};
+
+
+
+canvas.on("before:transform", () => {
+    isObjectSelected = true;
+    if (deleteModeEnable) {
+        canvas.getActiveObjects().forEach((obj) => {
+            canvas.remove(obj)
+            let id = obj.id;
+            fabricObject.splice(fabricObject.findIndex(element =>element.id  === id),1)
+            matchObjectSalle.splice(matchObjectSalle.findIndex(el =>el.id ===id),1)
+
+        });
+          canvas.discardActiveObject().renderAll()
+    }
+});
+
+canvas.on("before:selection:cleared", () => {
+    isObjectSelected = false;
+});
+
+canvas.on("mouse:down", (o) => {
+    if (!isObjectSelected && !deleteModeEnable) {
+        if (modeDessin === "rect") {
+
+            originPointer = canvas.getPointer(o.e);
+            origX = originPointer.x;
+            origY = originPointer.y;
+            isDown = true;
+            rect = new fabric.Rect({
+                left: origX,
+                top: origY,
+                originX: "left",
+                originY: "top",
+                width: 0,
+                height: 0,
+                angle: 0,
+                stroke: "#333333",
+                strokeWidth: 1,
+                fill: "rgba(255,0,0,0.5)",
+                transparentCorners: false,
+                id: generateID(),
+            });
+
+            canvas.add(rect);
+        } else {
+            addPoint(o);
+        }
+    }
+});
+
+canvas.on("mouse:move", (o) => {
+    if (!isObjectSelected && !deleteModeEnable && modeDessin === "rect") {
+        if (!isDown) return;
+
+        pointer = canvas.getPointer(o.e);
+
+        if (origX > pointer.x) {
+            rect.set({ left: Math.abs(pointer.x) });
+        }
+        if (origY > pointer.y) {
+            rect.set({ top: Math.abs(pointer.y) });
+        }
+
+        rect.set({ width: Math.abs(origX - pointer.x) });
+        rect.set({ height: Math.abs(origY - pointer.y) });
+
+        canvas.renderAll();
+    }
+});
+
+canvas.on("mouse:up", () => {
+    if (!isObjectSelected && !deleteModeEnable && modeDessin === "rect") {
+        isDown = false;
+        if (rect.width < 20 && rect.height < 20){
+            canvas.remove(rect);
+        }
+
+        else{
+            fabricObject.push(rect.toJSON(["id"]))
+            modal.toggle();
+        }
+    }
+});
