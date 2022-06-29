@@ -20,12 +20,12 @@
 </head>
 <body>
     <h1 class="titre">Ticket demande de matériel</h1>
-    <table id="Table_id" class="ticket_table">
+    <table id="Table_id">
         <tr>
-            <th>Nom</th>
-            <th>reference</th>
-            <th>fournisseur</th>
-            <th>quantité</th>
+            <th style="background-color: grey;">Nom</th>
+            <th style="background-color: grey;">Réference</th>
+            <th style="background-color: grey;">Fournisseur</th>
+            <th style="background-color: grey;">Quantité</th>
 
         </tr>
         @foreach ($donnees as $data)

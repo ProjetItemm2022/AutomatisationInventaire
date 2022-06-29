@@ -65,7 +65,7 @@
                 <ul class="menu__box">
                     <li><a class="menu__item" href="#" onclick="location='{{ route('index') }}'">Menu</a></li>
                     <li><a class="menu__item" href=" {{ route('logout') }}" onclick="event.preventDefault();
-                        document.getElementById('logout-form').submit();">{{ 'Deconnexion' }}</a></li>
+                        document.getElementById('logout-form').submit();">{{ 'Déconnexion' }}</a></li>
                 </ul>
             </div>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
@@ -74,7 +74,10 @@
 
         </nav>
     </header>
-    <h1 class="titre">Ticket demande de matériel</h1>
+    <div>
+    <label class="titre">Demande de matériel ( Ticket )</label>
+    </div>
+    <br>
         <!-- Dropdown pour le choix des categories et du produit -->
         <div style="margin-left: 2%; margin-right: 2%;">
         <!-- Dropdown categories-->
@@ -116,7 +119,8 @@
 
         <br><br>
         <!-- Bouton pour ajouter dans le tableau le produit selectionné-->
-        <button type="button" class="AjouterBouton">Ajouter le produit</button>
+        <button class="AjouterBouton">Ajouter le produit</button>
+        <button class="bouton" onclick=verifEffacer()>Supprimer</button>
 
 
 
@@ -127,22 +131,22 @@
         action="{{ route('downloadTicket') }}">{{ csrf_field() }}
         <table id="Table_id" class="ticket_table">
             <tr>
-                <th> <input type='checkbox' /></th>
+                <th style="background-color: grey;"> <input type='checkbox' /></th>
 
-                <th>Nom</th>
-                <th>reference</th>
-                <th>fournisseur</th>
-                <th>quantité</th>
+                <th style="background-color: grey;">Nom</th>
+                <th style="background-color: grey;">Réference</th>
+                <th style="background-color: grey;" >Fournisseur</th>
+                <th style="background-color: grey;">Quantité</th>
             </tr>
 
         </table>
         <div class="centre">
             <button class="bouton" data-loading-text="<i class='fa fa-refresh fa-spin></i>' &nbsp;Chargement" type="submit" style="margin: auto auto">Générer</button>
-            <a href="" class="bouton" id="ticketGenere" style="visibility: visible ;" target="_blank">Afficher ticket</a>
+            <br><br>
+            <a href="" class="bouton" id="ticketGenere" style="visibility: visible;margin:auto auto; display:block; text-decoration: none ; color:black; " target="_blank">Afficher ticket</a>
         </div>
     </form >
-    <button onclick=verifEffacer() ><img width="50"
-            src="https://static.vecteezy.com/ti/vecteur-libre/t2/630479-poubelle-icone-symbole-illustration-gratuit-vectoriel.jpg"></button>
+
         </div>
         <textarea name="reference" id="reference" style="display:none;"></textarea>
 
@@ -488,7 +492,7 @@
             var reference = $("#reference").text();
             var fournisseur = $("#fournisseur").val();
             var ligne = "<tr id='ligne"+ num +"'><td><input type='checkbox' name='select'></td><td>" + nom +"</td><td>" +
-                reference + "</td><td><select id='fournisseur' name='fournisseur' class='form-control'><option value=''>Aucun</option>@foreach ($fournisseurs as $four => $fournisseur)<option value='{{ $four }}''> {{ $fournisseur }}</option>@endforeach</select></td><td><input type='number' id='quantite' name='quantite'  value='1' min='1' max='100' required></td></tr>";
+                reference + "</td><td><select id='fournisseur' name='fournisseur' class='btn btn-secondary dropdown-toggle' ><option value=''>Aucun</option>@foreach ($fournisseurs as $four => $fournisseur)<option value='{{ $four }}''> {{ $fournisseur }}</option>@endforeach</select></td><td><input type='number' id='quantite' name='quantite'  value='1' min='1' max='100' required></td></tr>";
             $("table.ticket_table").append(ligne);
     }
 });

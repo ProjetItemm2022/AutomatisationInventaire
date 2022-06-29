@@ -19,7 +19,7 @@ function restore(){
         produitid.push($(this).val());
     });
     produitid.forEach((val) => {
-        fetch(`./gestionStocks/index/${val}`, {
+        fetch(`../gestionStocks/index/${val}`, {
             method: "patch",
             headers: {
                 "X-CSRF-Token": csrfToken,
@@ -39,7 +39,7 @@ function supprimerProduits() {
     });
 
     produitid.forEach((val) => {
-        fetch(`./gestionStocks/index/${val}`, {
+        fetch(`../gestionStocks/index/${val}`, {
             method: "delete",
             headers: {
                 "X-CSRF-Token": csrfToken,

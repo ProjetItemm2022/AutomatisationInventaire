@@ -1,5 +1,6 @@
 const csrfToken = document.head.querySelector("[name~=csrf-token][content]").content;
 const modal3 = new bootstrap.Modal($("#modalpdf"));
+const modalPasSelect = new bootstrap.Modal($("#modalPasSelect"));
 
 function cocherTous() {
     console.log("coucou checkbox");
@@ -13,20 +14,22 @@ function showModal3() {
     console.log("modal 3");
     modal3.toggle();
 }
+function showModal1() {
+    console.log("modal pas de selection");
+    modalPasSelect.toggle();
+}
 
 function verifqrCode() {
-    var rowCount = $("#").length; // Table size
+     // Table size
     var numberOfChecked = $('input:checkbox:checked').length; // checkbox selected
-    if (rowCount === 1) { // test si le tableau est vide
-        showModal3();
-    } else {
-        if (numberOfChecked === 0) { // test si rien est selectioné dans le tableau
-            showModal3();
-        } else {
+
+        if (numberOfChecked === 0) { // test si rien est selectionné dans le tableau
             showModal1();
+        } else {
+            showModal3();
         }
     }
-}
+
 
 $(document).ready(function () {
     $(document).on("click", "#checkAll", cocherTous);

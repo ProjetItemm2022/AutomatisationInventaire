@@ -47,7 +47,7 @@
                     {
                         data: 'id',
                         render: function(data, type, row, meta) {
-                            return `<a href="{{ url('editUser/${data}') }}">Modifier</a>`
+                            return `<a class="bouton" style="margin:auto auto; text-align: center; display:block;  text-decoration: none ; color:black;" href="{{ url('editUser/${data}') }}">Modifier</a>`
                         }
                     },
                     {
@@ -111,7 +111,7 @@
                 <ul class="menu__box">
                     <li><a class="menu__item" href="#" onclick="location='{{ route('index') }}'">Menu</a></li>
                     <li><a class="menu__item" href="href=" {{ route('logout') }} onclick="event.preventDefault();
-                        document.getElementById('logout-form').submit();">{{ 'Deconnexion' }}</a></li>
+                        document.getElementById('logout-form').submit();">{{ 'Déconnexion' }}</a></li>
                 </ul>
             </div>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
@@ -120,6 +120,9 @@
         </nav>
 
     </header>
+    <div>
+        <label class="titre">Gestion des utilisateurs</label>
+        </div>
     <main class="py-4">
         <div class="justify-content-center ">
             <div class="blanc" style="margin-left: 2%; margin-right: 2%;">
@@ -133,14 +136,14 @@
                 <table class="table table-bordered display" id="dataTable">
                     <thead>
                         <tr>
-                            <th id="checkbox" style="background-color: white;"><input id="checkAll" type="checkbox" />
+                            <th id="checkbox" style="background-color: grey;"><input id="checkAll" type="checkbox" />
                             </th>
-                            <th style="background-color: white;">Modifier</th>
-                            <th style="background-color: white;">Nom</th>
-                            <th style="background-color: white;">Prénom</th>
-                            <th style="background-color: white;">Email</th>
-                            <th style="background-color: white;">Privilege</th>
-                            <th style="background-color: white;">Actif</th>
+                            <th style="background-color: grey;">Modification</th>
+                            <th style="background-color: grey;">Nom</th>
+                            <th style="background-color: grey;">Prénom</th>
+                            <th style="background-color: grey;">Email</th>
+                            <th style="background-color: grey;">Privilege</th>
+                            <th style="background-color: grey;">Actif</th>
 
                         </tr>
                     </thead>

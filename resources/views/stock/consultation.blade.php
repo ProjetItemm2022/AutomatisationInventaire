@@ -3,15 +3,15 @@
 @section('content')
 <title>{{ 'Consultation des stocks' }}</title>
     <body>
-        <div id="app" class="">
-            <div  class="container blanc">
+        <div id="app">
+            <div  class=" blanc" style="margin: 20px 20px">
                 <table class="table table-bordered" id="table">
                     <thead>
                         <tr>
-                            <th  style="background-color: white;">Désignation</th>
-                            <th  style="background-color: white;">Référence</th>
-                            <th  style="background-color: white;">quantité</th>
-                            <th  style="background-color: white;">Localisation</th>
+                            <th  style="background-color: grey;">Désignation</th>
+                            <th  style="background-color: grey;">Référence</th>
+                            <th  style="background-color: grey;">Quantité</th>
+                            <th  style="background-color: grey;">Localisation</th>
                         </tr>
                     </thead>
                 </table>
@@ -21,7 +21,6 @@
     <script>
         $(document).ready(function() {
             $('#table').DataTable({
-                pagingType: "input",
                 processing: true,
                 serverSide: true,
                 ajax: '{{ url('getConsultTable') }}',
@@ -40,7 +39,7 @@
                     {
                         data: 'id',
                         render: function(data, type, row, meta) {
-                            return `<button onclick="location.href='produitlocation/${data}'">Voir les emplacements</button>`
+                            return `<button class="bouton2" style="visibility: visible;margin:auto auto; display:block; text-decoration: none ; color:black;" onclick="location.href='produitlocation/${data}'">Voir les emplacements</button>`
                         }
                     }
 

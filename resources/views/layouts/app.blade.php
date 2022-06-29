@@ -25,7 +25,7 @@
     </script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
-
+    <link rel="icon" href="https://itemm.fr/itemm/wp-content/uploads/2021/05/logo-itemm-2016.png">
     <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.11.5/datatables.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.12.1/pagination/input.js"></script>
@@ -46,7 +46,7 @@
                 <ul class="menu__box">
                     <li><a class="menu__item" href="#" onclick="location='{{ route('index') }}'">Menu</a></li>
                     <li><a class="menu__item" href="href=" {{ route('logout') }} onclick="event.preventDefault();
-                    document.getElementById('logout-form').submit();">{{ 'Deconnexion' }}</a></li>
+                    document.getElementById('logout-form').submit();">{{ 'Déconnexion' }}</a></li>
 
                 </ul>
             </div>
@@ -58,14 +58,7 @@
     </header>
     <div>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <!-- Left Side Of Navbar -->
-            <ul class="navbar-nav me-auto">
-
-            </ul>
-
-
-        </div>
+        <label class="titre">Consultation des stocks</label>
     </div>
     </nav>
 

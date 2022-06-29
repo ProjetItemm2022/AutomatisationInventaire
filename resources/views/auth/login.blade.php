@@ -43,6 +43,8 @@
     </header>
     </div>
     </nav>
+    <label class="titre">Connexion</label>
+</div>
 
     <main class="py-4">
         @yield('content')
@@ -80,8 +82,8 @@
                             <button type="submit" class="bouton">
                                 {{ __('Connexion') }}
                             </button>
-                            @if (Route::has('forget.password.get'))
-                            <a class="btn btn-link" href="{{ route('forget.password.get') }}">
+                            @if (Route::has('password.request'))
+                            <a class="bouton" style="margin:auto auto; display:block; text-decoration: none ; color:black; href="{{ route('password.request') }}">
                                 {{ __('Mot de passe oublié?') }}
                             </a>
                         @endif

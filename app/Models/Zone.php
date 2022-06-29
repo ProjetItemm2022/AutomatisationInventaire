@@ -14,6 +14,7 @@ class Zone extends Model
         'cheminLocalisation',
         'coordPoint',
         'salle_id',
+        'offset'
     ];
 
     public function emplacement(){

@@ -119,7 +119,7 @@
                     <li><a class="menu__item" href="#" onclick="location='{{ route('index') }}'">Menu</a></li>
                     <li><a class="menu__item" href="href=" {{ route('logout') }}
                             onclick="event.preventDefault();
-                            document.getElementById('logout-form').submit();">{{ 'Deconnexion' }}</a>
+                            document.getElementById('logout-form').submit();">{{ 'Déconnexion' }}</a>
                     </li>
                 </ul>
             </div>
@@ -131,13 +131,13 @@
 
     <form name=" inscription" id="form1 ">
         <div>
-            <label class="gestionQrCode">Générer QrCode</label>
+            <label class="gestionQrCode">Gestion des QrCodes</label>
 
 
             <div style="margin-left: 2%; margin-right: 2%;">
                 <div>
                     <br><br>
-                    <input id="genererQR" type="button" onclick="showModal3();" class="bouton" value="Générer QR Code">
+                    <input id="genererQR" type="button" onclick="verifqrCode()" class="bouton" value="Générer QR Code">
                 </div>
                 <br>
 
@@ -147,13 +147,13 @@
 
                     <thead>
                         <tr>
-                            <th style="background-color: #E88E73;" id="checkbox" class="checkProd"><input
+                            <th style="background-color: grey;" id="checkbox" class="checkProd"><input
                                     id="checkAll" type="checkbox" />
                             </th>
-                            <th style="background-color: #E88E73;">Boite</th>
-                            <th style="background-color: #E88E73;">Zone</th>
-                            <th style="background-color: #E88E73;">Produit</th>
-                            <th style="background-color: #E88E73;">Quantité</th>
+                            <th style="background-color: grey;">Boite</th>
+                            <th style="background-color: grey;">Zone</th>
+                            <th style="background-color: grey;">Produit</th>
+                            <th style="background-color: grey;">Quantité</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -204,6 +204,24 @@
             </div>
         </div>
     </div>
+   <div class="modal" id="modalPasSelect" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                Il n'y a pas de boite selectionné
+                            </h5>
+
+                        </div>
+
+                        <div class="modal-footer">
+
+                            <button class="bouton" data-bs-dismiss="modal">Retour</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 </body>
 

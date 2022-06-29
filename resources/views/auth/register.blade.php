@@ -38,12 +38,25 @@
         <nav class="flex header">
             <img width="260" src="https://itemm.fr/itemm/wp-content/uploads/2021/05/logo-itemm-2016.png"
                 alt="Logo de l'itemm">
-
+                <div class="hamburger-menu" >
+                    <input id="menu__toggle" type="checkbox" style="position: fixed" />
+                    <label class="menu__btn" for="menu__toggle" >
+                        <span></span>
+                    </label>
+                    <ul class="menu__box">
+                        <li><a class="menu__item" href="#" onclick="location='{{ route('index') }}'">Menu</a></li>
+                        <li><a class="menu__item" href="href=" {{ route('logout') }} onclick="event.preventDefault();
+                            document.getElementById('logout-form').submit();">{{ 'Déconnexion' }}</a></li>
+                    </ul>
+                </div>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                    @csrf
+                </form>
         </nav>
 
     </header>
     </nav>
-
+<label class="titre">Connexion</label>
     <main class="py-4">
         @yield('content')
     </main>
@@ -71,7 +84,7 @@
                             <input pattern="[a-zA-Z]{1,}" id="nom" type="text" class="form-control @error('nom') is-invalid @enderror"
                                 name="nom" value="{{ old('nom') }}" required autocomplete="nom" autofocus>
                         </div>
-                        <div style="color: red">- Majuscules et minuscules </div>
+                        <div style="color: red">- Majuscules et minuscules</div>
                     </div>
                     <br>
                     <div>
@@ -88,7 +101,7 @@
                         <label for="email">{{ __('Adresse email') }}</label>
 
                         <div>
-                            <input  pattern="[a-z0-9].+itemm.fr$" id="email" type="email" class="form-control @error('email') is-invalid @enderror"
+                            <input  pattern="[a-z0-9].+gmail.com$" id="email" type="email" class="form-control @error('email') is-invalid @enderror"
                                 name="email" value="{{ old('email') }}" required autocomplete="email">
                         </div>
                         <div style="color: red">- Lettres + @itemm.fr</div>

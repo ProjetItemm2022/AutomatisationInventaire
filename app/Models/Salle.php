@@ -12,6 +12,8 @@ class Salle extends Model
         'nom',
         'cheminImage',
         'coordPoint',
+        'offset',
+        'batiment_id'
     ];
     public function batiment(){
         return $this->hasMany(Batiment::class);

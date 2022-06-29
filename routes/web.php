@@ -99,18 +99,24 @@ Route::get('/assignation', AssignationController::class)->name('assignation')->m
 Route::get('/assignation/nom', [AssignationController::class, 'nommage'])->name('assign.name')->middleware('auth.admin');
 Route::get('/assignation/batiment', [AssignationController::class, 'assignationBatiment'])->name('assign.batiment')->middleware('auth.admin');
 Route::get('/assignation/salle', [AssignationController::class, 'assignationSalle'])->name('assign.salle')->middleware('auth.admin');
+Route::get('/assignation/sallezoom/{id}', [AssignationController::class, 'assignationSalleZoom'])->middleware('auth.admin');
+Route::get('/assignation/zone', [AssignationController::class, 'assignationZone'])->name('assign.zone')->middleware('auth.admin');
+Route::get('/assignation/zonezoom/{id}', [AssignationController::class, 'assignationZoneZoom'])->middleware('auth.admin');
+
+//Route::get('/assignation/sallezoom/nom/{idbatiment}', [AssignationController::class, 'getSalleNameOfBatiment'])->middleware('auth.admin');
 /*Route::get('/assignation/salle/{id}', [AssignationController::class, 'assignationSalle'])->middleware('auth.admin');
 Route::get('/assignation/salle/', function(){
     return redirect('/assignation/salle/1');
 })->name('assign.salle')->middleware('auth.admin');
 */
-Route::get('/assignation/zone/{id}', [AssignationController::class, 'assignationZone'])->middleware('auth.admin');
+/*Route::get('/assignation/zone/{id}', [AssignationController::class, 'assignationZone'])->middleware('auth.admin');
 Route::get('/assignation/zone/', function(){
     return redirect('/assignation/zone/1');
-})->name('assign.zone')->middleware('auth.admin');
+})->name('assign.zone')->middleware('auth.admin');*/
 
 Route::get('/batiment/nom', [AssignationController::class, 'getBatimentName'])->middleware('auth.admin');
 Route::get('/salle/nom/{idbatiment}', [AssignationController::class, 'getSalleNameOfBatiment'])->middleware('auth.admin');
+Route::get('/zone/nom/{idbatiment}', [AssignationController::class, 'getZoneNameOfBatiment'])->middleware('auth.admin');
 Route::put('/assignation/store/planglobal',[AssignationController::class, 'storePlanGlobal'])->middleware('auth.admin');
 Route::put('/assignation/store/plan/Salle/',[AssignationController::class, 'storePlanSalle'])->middleware('auth.admin');
 Route::put('/assignation/store/plan/Zone/',[AssignationController::class, 'storePlanZone'])->middleware('auth.admin');
@@ -118,6 +124,11 @@ Route::post('/assignation/storeCoordBatiment',[AssignationController::class, 'st
 //Route::put('/assignation/storeCoordBatiment',[AssignationController::class, 'storeCoordBatiment'])->middleware('auth.admin');
 
 
+Route::post('/assignation/storeCoordSalle',[AssignationController::class, 'storeCoordSalle'])->middleware('auth.admin');
+Route::post('/assignation/removeSalle',[AssignationController::class, 'removeSalle'])->middleware('auth.admin');
+
+Route::post('/assignation/storeCoordZone',[AssignationController::class, 'storeCoordZone'])->middleware('auth.admin');
+Route::post('/assignation/removeZone',[AssignationController::class, 'removeZone'])->middleware('auth.admin');
 
 Route::put('/assignation/store/salle',[AssignationController::class, 'storeSalle'])->middleware('auth.admin');
 Route::put('/assignation/store/zone',[AssignationController::class, 'storeZone'])->middleware('auth.admin');
@@ -158,9 +169,13 @@ Route::get('getSub',[LocalisationController::class, 'getSub'])->name('getSub');
 Route::get('getSub2',[LocalisationController::class, 'getSub2'])->name('getSub2');
 Route::get('getProd',[LocalisationController::class, 'getProd'])->name('getProd');
 Route::post('creerBoite',[LocalisationController::class, 'creerBoite'])->name('creerBoite');
-Route::get('/menu/GestionBoites', [LocalisationController::class,'index'])->name('GestionBoites');
+Route::get('/menu/GestionBoites', [LocalisationController::class,'index'])->name('GestionBoites')->middleware('auth.admin');
+Route::get('getQuantite',[LocalisationController::class, 'getQuantite'])->name('getQuantite');
+Route::get('getImgBat',[LocalisationController::class, 'getImgBat'])->name('getImgBat');
 Route::get('editBoite/{id}', [LocalisationController::class, 'editBoite'])->name('editBoite');
 Route::put('updateBoite/{id}',[LocalisationController::class, 'updateBoite']);
+Route::get('/ajoutBoites', [LocalisationController::class, 'localisation'])->name('ajoutBoites')->middleware('auth.admin');
+Route::get('boiteData', [LocalisationController::class ,'boiteData']);
 
 
 
@@ -170,7 +185,7 @@ Route::get('get', [TicketController::class, 'getListe']);
 Route::post('popup', [TicketController::class, 'popup'])->name('popup');
 Route::get('downloadTicket', [PDFController::class, 'downloadTicket'])->name('downloadTicket');
 //Route::post('downloadTicket', [PDFController::class, 'downloadTicket'])->name('downloadTicket');
-Route::get('/menu/ticket', [TicketController::class ,'index'])->name('ticket');
+Route::get('/menu/ticket', [TicketController::class ,'index'])->name('ticket')->middleware('auth.admin');;
 
 Route::get('getSub',[TicketController::class, 'getSub'])->name('getSub');
 Route::get('getSub2',[TicketController::class, 'getSub2'])->name('getSub2');
@@ -198,7 +213,7 @@ Route::patch('/gestionStocks/index/{id}', function($id){
 
 Route::get('getCategorie', [GererStocks::class, 'getCategorie']);
 
-Route::get('/ajout', [GererStocks::class, 'ajout'])->name('ajout');
+Route::get('/ajout', [GererStocks::class, 'ajout'])->name('ajout')->middleware('auth.admin');
 
 Route::get('edit/{id}', [GererStocks::class, 'edit'])->name('edit');
 
@@ -208,7 +223,7 @@ Route::post('/ajout', [GererStocks::class, 'create']);
 
 Route::post('ajoutCategorie', [AjoutCategorie::class, 'create'])->name('categorie.ajout');
 
-Route::post('ajoutFournisseur', [AjoutFournisseur::class, 'create'])->name('fournisseur.ajout');
+Route::post('ajoutFournisseur', [AjoutFournisseur::class, 'create'])->name('fournisseur.ajout')->middleware('auth.admin');
 
 Route::get('upload-image', [GererStocks::class, 'index']);
 
@@ -228,10 +243,10 @@ Route::get('/ajoutImage', [GererStocks::class, 'index']);
 
 Route::post('upload', [GererStocks::class, 'upload'])->name('file.upload');
 
-Route::get('/ajoutBoites', [LocalisationController::class, 'localisation'])->name('ajoutBoites');
+// Route historique
 
 Route::get('/historique', [HistoriqueController::class,'__invoke'])->name('historique');
 
 Route::get('/Historique', [HistoriqueController::class,'Historique']);
 
-Route::get('boiteData', [LocalisationController::class ,'boiteData']);
+

@@ -47,7 +47,7 @@
                     <li><a class="menu__item" href="#" onclick="location='{{ route('index') }}'">Menu</a></li>
                     <li><a class="menu__item" href="href=" {{ route('logout') }}
                             onclick="event.preventDefault();
-                            document.getElementById('logout-form').submit();">{{ 'Deconnexion' }}</a>
+                            document.getElementById('logout-form').submit();">{{ 'Déconnexion' }}</a>
                     </li>
                 </ul>
             </div>
@@ -89,8 +89,10 @@
                                 class="form-control @error('nom') is-invalid @enderror" name="nom"
                                 value="{{ $users->nom }}" required autocomplete="nom" autofocus>
                         </div>
+
                         <div style="color: red">- Majuscules et minuscules</div>
                     </div>
+
                     <br>
                     <div>
                         <label for="prenom">{{ __('Prénom') }}</label>

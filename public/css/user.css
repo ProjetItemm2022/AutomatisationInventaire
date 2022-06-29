@@ -4,7 +4,14 @@
     padding: 0;
 
 }
-
+.titre {
+    width: 100%;
+        height: 80px;
+        background-color: white;
+        font-size: xx-large;
+        font-weight: bold;
+        text-align: center;
+  }
 .flex{
     display: flex;
 
@@ -49,6 +56,14 @@ select{
 .bouton {
     background-color: #E88E73;
     width: 150px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-color: black;
+    font-weight:bold;
+}
+.bouton2 {
+    background-color: #E88E73;
+    width: 170px;
     margin-top: 10px;
     margin-bottom: 10px;
     border-color: black;

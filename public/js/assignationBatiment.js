@@ -29,42 +29,82 @@ this.y = y;
 
 
 $("#draw").click(function () {
-if (drawingObject.type == "roof") {
+    disableAll(true);
+    if (drawingObject.type == "roof") {
+        drawingObject.type = "";
+        lines.forEach(function (value, index, ar) {
+            canvas.remove(value);
+        });
+        //canvas.remove(lines[lineCounter - 1]);
+        roof = makeRoof(roofPoints);
+        canvas.add(roof);
+        canvas.renderAll();
+    } else {
+        drawingObject.type = "roof"; // roof type
+    }
+});
+function disableAll(etat){
+    console.log("dans grise");
+    canvas.forEachObject(function (obj) {
+
+    obj.set("fill", 'rgba(50,50,50,0.2)');
+
+        if (etat)
+        {
+            obj.set('lockMovementX', true);
+            obj.set('lockMovementY', true);
+
+            obj.set('lockScalingX', true);
+            obj.set('lockScalingY', true);
+
+            obj.set('lockRotation', true);
+            obj.set('hasControls', false);
+            obj.set('hasBorders', false);
+            obj.set('evented',false);
+            obj.set('selectable', false);
+
+        }
+        else
+        {
+            obj.set('lockMovementX', false);
+            obj.set('lockMovementY', false);
+
+            obj.set('lockScalingX', false);
+            obj.set('lockScalingY', false);
+
+            obj.set('lockRotation', false);
+            obj.set('hasControls', true);
+            obj.set('hasBorders', true);
+            obj.set('evented',true);
+            obj.set('selectable', true);
+
+        }
+    });
+
+}
+
+
+fabric.util.addListener(window, 'dblclick', function () {
+    disableAll(false);
     drawingObject.type = "";
     lines.forEach(function (value, index, ar) {
         canvas.remove(value);
     });
     //canvas.remove(lines[lineCounter - 1]);
     roof = makeRoof(roofPoints);
-    canvas.add(roof);
-    canvas.renderAll();
-} else {
-    drawingObject.type = "roof"; // roof type
-}
-});
 
 
-
-fabric.util.addListener(window, 'dblclick', function () {
-drawingObject.type = "";
-lines.forEach(function (value, index, ar) {
-    canvas.remove(value);
-});
-//canvas.remove(lines[lineCounter - 1]);
-roof = makeRoof(roofPoints);
-
-
-//canvas.add(roof);
-console.log(roofPoints);
-console.log(roof.points);
-console.log("first : " + roof.points[0].x + "," + roof.points[0].y);
-//var nom = prompt("nom ? ");
-$("#modal").toggle();
-console.log("double click");
-//clear arrays
-roofPoints = [];
-lines = [];
-lineCounter = 0;
+    //canvas.add(roof);
+    console.log(roofPoints);
+    console.log(roof.points);
+    console.log("first : " + roof.points[0].x + "," + roof.points[0].y);
+    //var nom = prompt("nom ? ");
+    $("#modal").toggle();
+    console.log("double click");
+    //clear arrays
+    roofPoints = [];
+    lines = [];
+    lineCounter = 0;
 
 });
 function disableMove(obj)
@@ -170,7 +210,7 @@ let ctx = can.getContext('2d');
 console.log("id : " + id);
 console.log("coordonnees : " + JSON.stringify(coordonnees));
 
-let canvasUrl = can.toDataURL("image/jpeg", 0.5);
+let canvasUrl = can.toDataURL("image/jpeg", 0.9);
 var nom = $("#select-batiment option[value=" + id + "]").text();
 var offset = JSON.stringify({"top": top, "left": left});
 $.ajax({
@@ -283,14 +323,22 @@ $.getJSON('../batiment/nom',
                         }
                         else
                         {
-                        console.log("mouse up groupe");
-                        legende.left = this.left;
-                        legende.top = this.top;
-                        console.log(this.left + " , " + this.top);
-                        legende.setCoords();
-                        canvas.renderAll();
-                        console.log(JSON.stringify(this.points))
-                        uploadimg(this.id, this.points, this.top, this.left);
+                            legende.left = this.left;
+            legende.top = this.top;
+            console.log(this.left + " , " + this.top);
+            legende.setCoords();
+            disableAll(true);
+            legende.set({
+                fill: "#ff0000"
+            });
+            this.set({
+                fill: 'rgba(255,0,0,0.2)'
+            });
+            canvas.renderAll();
+            console.log(JSON.stringify(this.points))
+            uploadimg(this.id, this.points, this.top, this.left);
+            disableAll(false);
+            griseAll();
                     }
                     });
                     canvas.add(legende);
@@ -301,6 +349,7 @@ $.getJSON('../batiment/nom',
                 }
 
             });
+            griseAll();
 
         })
         .fail(function (xhr, text, error) {
@@ -344,11 +393,11 @@ if (idBat != "-1" && idBat != -1)
 
 
 
-    uploadimg(idBat, roof.points, roof.top, roof.left);
+
     roof.set({id: idBat});
 
 
-    griseAll();
+    //griseAll();
 
     roof.on('mouseup', function () {
         console.log("supp : " + remove);
@@ -367,13 +416,22 @@ if (idBat != "-1" && idBat != -1)
         }
        else
         {
-        legende.left = this.left;
-        legende.top = this.top;
-        console.log(this.left + " , " + this.top);
-        legende.setCoords();
-        canvas.renderAll();
-        console.log(JSON.stringify(this.points))
-        uploadimg(this.id, this.points, this.top, this.left);
+            legende.left = this.left;
+            legende.top = this.top;
+            console.log(this.left + " , " + this.top);
+            legende.setCoords();
+            disableAll(true);
+            legende.set({
+                fill: "#ff0000"
+            });
+            this.set({
+                fill: 'rgba(255,0,0,0.2)'
+            });
+            canvas.renderAll();
+            console.log(JSON.stringify(this.points))
+            uploadimg(this.id, this.points, this.top, this.left);
+            disableAll(false);
+            griseAll();
         }
     });
     //canvas.add(group);
@@ -381,6 +439,8 @@ if (idBat != "-1" && idBat != -1)
     canvas.add(legende);
     canvas.add(roof);
     canvas.renderAll();
+    uploadimg(idBat, roof.points, roof.top, roof.left);
+    griseAll();
     $("#modal").toggle();
 }
 

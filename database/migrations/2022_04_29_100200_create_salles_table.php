@@ -16,9 +16,10 @@ class CreateSallesTable extends Migration
     {
         Schema::create('salles', function (Blueprint $table) {
             $table->id();
-            $table->string("nom",30)->unique();
+            $table->string("nom",30)->nullable();
             $table->string("cheminImage",150);
             $table->json("coordPoint")->nullable();
+            $table->json("offset")->nullable();
             $table->foreignIdFor(Batiment::class)->constrained();
             $table->timestamps();
         });

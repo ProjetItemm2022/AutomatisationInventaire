@@ -36,10 +36,20 @@
     <div id="app" class="">
         <nav class="flex header">
             <img width="260" class=""src="https://itemm.fr/itemm/wp-content/uploads/2021/05/logo-itemm-2016.png" alt="Logo de l'itemm">
-            <form action="../menu/">
-                <button type="submit" style="margin-right: 10px">
-                    <img width="50" class="m-e-1" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/1024px-Hamburger_icon.svg.png">
-                </button>
+            <div class="hamburger-menu">
+                <input id="menu__toggle" type="checkbox" style="position: fixed" />
+                <label class="menu__btn" for="menu__toggle">
+                    <span></span>
+                </label>
+                <ul class="menu__box">
+                    <li><a class="menu__item" href="href=" {{ route('logout') }}
+                            onclick="event.preventDefault();
+                            document.getElementById('logout-form').submit();">{{ 'Déconnexion' }}</a>
+                    </li>
+                </ul>
+            </div>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                @csrf
             </form>
         </nav>
         <div>

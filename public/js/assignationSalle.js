@@ -35,6 +35,7 @@ this.y = y;
 
 
 $("#draw").click(function () {
+  //  disableAll(true);
 if (drawingObject.type == "roof") {
     drawingObject.type = "";
     lines.forEach(function (value, index, ar) {
@@ -61,6 +62,7 @@ fabric.util.addListener(window, 'click', function (options) {
 });
 
 fabric.util.addListener(window, 'dblclick', function () {
+    //disableAll(false);
     drawingObject.type = "";
     lines.forEach(function (value, index, ar) {
         canvas.remove(value);
@@ -83,6 +85,47 @@ fabric.util.addListener(window, 'dblclick', function () {
     lineCounter = 0;
 
 });
+
+function disableAll(etat){
+    console.log("dans grise");
+    canvas.forEachObject(function (obj) {
+
+    obj.set("fill", 'rgba(50,50,50,0.2)');
+
+        if (etat)
+        {
+            obj.set('lockMovementX', true);
+            obj.set('lockMovementY', true);
+
+            obj.set('lockScalingX', true);
+            obj.set('lockScalingY', true);
+
+            obj.set('lockRotation', true);
+            obj.set('hasControls', false);
+            obj.set('hasBorders', false);
+            obj.set('evented',false);
+            obj.set('selectable', false);
+
+        }
+        else
+        {
+            obj.set('lockMovementX', false);
+            obj.set('lockMovementY', false);
+
+            obj.set('lockScalingX', false);
+            obj.set('lockScalingY', false);
+
+            obj.set('lockRotation', false);
+            obj.set('hasControls', true);
+            obj.set('hasBorders', true);
+            obj.set('evented',true);
+            obj.set('selectable', true);
+
+        }
+    });
+
+}
+
 function disableMove(obj)
 {
     obj.set('lockMovementX', true);
@@ -139,6 +182,7 @@ x = options.e.pageX - offset.left;
 y = options.e.pageY - offset.top;
 }
 
+
 function makeRoof(roofPoints) {
 
 var left = findLeftPaddingForRoof(roofPoints);
@@ -181,49 +225,7 @@ return Math.abs(result);
 }
 
 
-function uploadimg(id, coordonnees, top, left)
-{
-//nomFichier = "img" + Date.now();
-//console.log("nom du fichier : " + nomFichier);
 
-let can = document.getElementById('canvas-tools');
-let ctx = can.getContext('2d');
-console.log("id : " + id);
-console.log("coordonnees : " + JSON.stringify(coordonnees));
-
-let canvasUrl = can.toDataURL("image/jpeg", 0.5);
-var nom = $("#select-batiment option[value=" + id + "]").text();
-var offset = JSON.stringify({"top": top, "left": left});
-$.ajax({
-    url: '../assignation/storeCoordBatiment',
-    data: {
-        "id": id,
-        "nom": nom,
-        "offset": offset,
-        "coordonnees": JSON.stringify(coordonnees),
-        "monImageBase64": canvasUrl
-    },
-    headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json, text-plain, */*",
-        "X-CSRF-Token": csrfToken,
-        "X-Requested-With": "XMLHttpRequest",
-    },
-    type: 'POST',
-    dataType: 'json',
-    success:
-            function (donnees, status, xhr) {
-                console.log("ok");
-            },
-    error:
-            function (xhr, status, error) {
-                console.log("param : " + JSON.stringify(xhr));
-                console.log("status : " + status);
-                console.log("error : " + error);
-            }
-});
-
-}
 function griseAll()
 {
 console.log("dans grise");
@@ -248,20 +250,22 @@ function supprimer()
 {
 remove = true;
 }
-
+/*
 function ajoutAreaMap(id,offsetX,offsetY,tabpoints)
 {
     var points="";
     var i=0;
-    console.log("offsetX : "+offsetX);
-    console.log("offsetY : "+offsetY);
-    console.log("tabpoints : "+JSON.stringify(tabpoints));
-    console.log("id : "+id);
+    var xx=0;
+    var yy=0;
     tabpoints.forEach(point => {
-        var x=Math.round(parseFloat(point.x)+parseFloat(offsetX));
-        var y=Math.round(parseFloat(point.y)+parseFloat(offsetY));
+        var x=xx+Math.round(parseFloat(point.x)+parseFloat(offsetX));
+        var y=yy+Math.round(parseFloat(point.y)+parseFloat(offsetY));
         if (i==0)
         {
+            xx=Math.round(Math.abs(point.x));
+            yy=Math.round(Math.abs(point.y));
+            x=xx+Math.round(parseFloat(point.x)+parseFloat(offsetX));
+            y=yy+Math.round(parseFloat(point.y)+parseFloat(offsetY));
             points=points+x+","+y;
         }
         else
@@ -271,10 +275,11 @@ function ajoutAreaMap(id,offsetX,offsetY,tabpoints)
         }
         i++;
     });
-    console.log(points);
+    console.log("les points : "+points);
+    $("#mapplan").append("<area shape=\"poly\" coords=\""+points+"\" title=\""+id+"\" href=\""+id+".html\" >");
 
 
-}
+}*/
 
 function afficherBatiments()
 {
@@ -316,13 +321,14 @@ $.getJSON('../batiment/nom',
                     });
 
                     poly.on('mouseup', function () {
-                       console.log(this.id);
+                       console.log("id zone : "+this.id);
+                       location.replace("sallezoom/"+this.id);
                     });
                     disableMove(legende);
                     disableMove(poly);
                     canvas.add(legende);
                     canvas.add(poly);
-                    ajoutAreaMap(ligne.id,offset.left,offset.top,tabpoints);
+                 //   ajoutAreaMap(ligne.id,offset.left,offset.top,tabpoints);
 
                 } else {
                     console.log("coord est null");
@@ -341,88 +347,13 @@ $.getJSON('../batiment/nom',
 
 }
 
-function ajouterLimiteBatiment() {
 
-
-var nom = $("#select-batiment :selected").text();
-var idBat = $("#select-batiment :selected").val();
-if (idBat != "-1" && idBat != -1)
-{
-    console.log("nom : " + nom + " id : " + idBat);
-    //idsBatDrawn.push(idBat);
-    $("#select-batiment option[value=" + idBat + "]").hide();
-    // on se repositionne sur le 1er element de la liste
-    //$("#select-batiment").prop("selectedIndex",-1);
-    $("#select-batiment").val("-1");
-
-    var legende = new fabric.Text(nom, {
-        /*    fontFamily: 'Delicious_500',
-         left: 10,
-         top: 10,*/
-        fontSize: 20,
-        //  textAlign:"left",
-        fill: "#ff0000"
-    });
-    legende.set({
-
-        left: roof.left,
-        top: roof.top,
-
-    });
-
-
-
-    uploadimg(idBat, roof.points, roof.top, roof.left);
-    roof.set({id: idBat});
-
-
-    griseAll();
-
-    roof.on('mouseup', function () {
-        console.log("supp : " + remove);
-        if (remove)
-        {
-
-            var supp = confirm("voulez vous supprimer cet zone :" + $("#select-batiment option[value=" + this.id + "]").text() + "?");
-            if (supp)
-            {
-                $("#select-batiment option[value=" + this.id + "]").show();
-                uploadimg(this.id, null, 0, 0);
-                canvas.remove(this);
-                canvas.remove(legende);
-            }
-            remove = false;
-        }
-       else
-        {
-        legende.left = this.left;
-        legende.top = this.top;
-        console.log(this.left + " , " + this.top);
-        legende.setCoords();
-        canvas.renderAll();
-        console.log(JSON.stringify(this.points))
-        uploadimg(this.id, this.points, this.top, this.left);
-        }
-    });
-    //canvas.add(group);
-
-    canvas.add(legende);
-    canvas.add(roof);
-    canvas.renderAll();
-    $("#modal").toggle();
-}
-
-}
 $(document).ready(function () {
 
 
-// $("#saveimg").click(sauvegadeImg);
-//$("#saveimg").click(uploadimg);
-//$("#grise").click(griseAll);
-//$("#supprimer").click(supprimer);
 
     afficherBatiments();
 
-//$("#modalBtn").click(ajouterLimiteBatiment);
+
 
 });

@@ -20,6 +20,7 @@ class CreateZonesTable extends Migration
             $table->string("nom",100);
             $table->string("cheminLocalisation",150)->default("/images/localisation/default.png");
             $table->json("coordPoint")->nullable();
+            $table->json("offset")->nullable();
             $table->foreignIdFor(Salle::class)->constrained();
             $table->timestamps();
         });

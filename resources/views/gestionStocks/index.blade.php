@@ -220,7 +220,7 @@
                     {
                         data: 'id',
                         render: function(data, type, row, meta) {
-                            return `<a href="{{ url('edit/${data}') }}">Modifier</a>`
+                            return `<a class="bouton" style="margin:auto auto; text-align: center; display:block;  text-decoration: none ; color:black;" href="{{ url('edit/${data}') }}">Modifier</a>`
                         }
                     },
                     {
@@ -281,7 +281,7 @@
                 <ul class="menu__box">
                     <li><a class="menu__item" href="#" onclick="location='{{ route('index') }}'">Menu</a></li>
                     <li><a class="menu__item" href="href=" {{ route('logout') }} onclick="event.preventDefault();
-                            document.getElementById('logout-form').submit();">{{ 'Deconnexion' }}</a></li>
+                            document.getElementById('logout-form').submit();">{{ 'Déconnexion' }}</a></li>
                 </ul>
             </div>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">

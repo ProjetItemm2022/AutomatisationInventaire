@@ -43,7 +43,7 @@
                 <ul class="menu__box">
                     <li><a class="menu__item" href="#" onclick="location='<?php echo e(route('index')); ?>'">Menu</a></li>
                     <li><a class="menu__item" href="href=" <?php echo e(route('logout')); ?> onclick="event.preventDefault();
-                        document.getElementById('logout-form').submit();"><?php echo e('Deconnexion'); ?></a></li>
+                        document.getElementById('logout-form').submit();"><?php echo e('Déconnexion'); ?></a></li>
                 </ul>
             </div>
             <form id="logout-form" action="<?php echo e(route('logout')); ?>" method="POST" class="d-none">
@@ -61,18 +61,15 @@
                 <br>
 
                 <table class="table table-bordered display" id="dataTableBoites">
-
-
-
                     <thead>
                         <tr>
                             <th style="background-color: grey;" id="checkbox"><input
                                     id="checkAll" type="checkbox" />
                             </th>
-                            <th style="background-color: grey;">zone</th>
+                            <th style="background-color: grey;">Zone</th>
                             <th style="background-color: grey;">Produit</th>
-                            <th style="background-color: grey;">Quantite</th>
-                            <th style="background-color: grey;">Modifier</th>
+                            <th style="background-color: grey;">Quantité</th>
+                            <th style="background-color: grey;">Modification</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -114,7 +111,7 @@
                     {
                         data: 'id',
                         render: function(data, type, row, meta) {
-                            return `<a href="<?php echo e(url('editBoite/${data}')); ?>">Modifier</a>`
+                            return `<a class="bouton" style="margin:auto auto; text-align: center; display:block;  text-decoration: none ; color:black;" href="<?php echo e(url('editBoite/${data}')); ?>">Modifier</a>`
                         }
                     },
 

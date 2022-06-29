@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>delimitation des batiments</title>
+    <title>Délimitation des batiments</title>
     <link rel="icon" href="https://itemm.fr/itemm/wp-content/uploads/2021/05/logo-itemm-2016.png">
     <!-- Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -48,7 +48,7 @@
                     <ul class="menu__box">
                         <li><a class="menu__item" href="#" onclick="location='{{ route('index') }}'">Menu</a></li>
                       <li><a class="menu__item" href="href=" {{ route('logout') }} onclick="event.preventDefault();
-                        document.getElementById('logout-form').submit();">{{ 'Deconnexion' }}</a></li>
+                        document.getElementById('logout-form').submit();">{{ 'Déconnexion' }}</a></li>
 
                     </ul>
                 </div>

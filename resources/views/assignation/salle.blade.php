@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>delimitation des batiments</title>
+    <title>Délimitation des batiments</title>
     <link rel="icon" href="https://itemm.fr/itemm/wp-content/uploads/2021/05/logo-itemm-2016.png">
     <!-- Scripts -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -16,6 +16,7 @@
     <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.4.0/fabric.min.js" type="text/javascript"></script>
+
 <!--
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/521/fabric.min.js" defer
         integrity="sha512-nPzvcIhv7AtvjpNcnbr86eT6zGtiudLiLyVssCWLmvQHgR95VvkLX8mMpqNKWs1TG3Hnf+tvHpnGmpPS3yJIgw=="
@@ -47,41 +48,38 @@
 
                     <ul class="menu__box">
                         <li><a class="menu__item" href="#" onclick="location='{{ route('index') }}'">Menu</a></li>
-                      <li><a class="menu__item" href="href=" {{ route('logout') }} onclick="event.preventDefault();
-                        document.getElementById('logout-form').submit();">{{ 'Deconnexion' }}</a></li>
+                      <li><a class="menu__item" href="{{ route('logout') }}" onclick="event.preventDefault();
+                        document.getElementById('logout-form').submit();">{{ 'Déconnexion' }}</a></li>
 
                     </ul>
                 </div>
         </nav>
         <div class="container">
-            <h3>Cliquez sur le bouton bleu pour commencer à dessiner. Double cliquez pour terminer</h3>
-            <div class="control  row">
+            <h3>Cliquez sur le batiment pour lequel vous souhaitez définir les salles</h3>
+        <!--    <div class="control  row">
                 <button id="draw" class="btn btn-primary toggle-label">Dessiner une salle</button>
                 <button id="supprimer" class="btn btn-danger toggle-label">Effacer le dessin d'une salle</button>
+
+            <button id="grise" class="btn btn-primary toggle-label">Grise</button>-->
             <button class="enregistrer toggle-label" onclick="location.replace('{{ route('assignation') }}');">Retour</button>
-            <!--<button id="grise" class="btn btn-primary toggle-label">Grise</button>-->
 
     </div>
 
             <br/><br/>
             <br/><br/>
 
-
                 <canvas height="{{ $size[1] }}" width="{{ $size[0] }}" id="canvas-tools"></canvas>
 
-                <img src="./plan/0PlanGeneral.png" alt="plan" height="{{ $size[1] }}" width="{{ $size[0] }} usemap="#mapplan"/>
-                <map name="workmap" id="mapplan">
-  <area shape="rect" coords="34,44,270,350" alt="Computer" href="computer.htm">
-  <area shape="rect" coords="290,172,333,250" alt="Phone" href="phone.htm">
-  <area shape="circle" coords="337,300,44" alt="Coffee" href="coffee.htm">
-</map>
 
 
         </div>
     </div>
+
     <script src="{{ asset('js/app.js') }}" defer></script>
 
     <script src="{{ asset('js/assignationSalle.js') }}" defer type="module"></script>
+
+
 </body>
 
 </html>

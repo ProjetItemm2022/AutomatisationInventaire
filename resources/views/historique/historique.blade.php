@@ -254,7 +254,7 @@
                 <ul class="menu__box">
                     <li><a class="menu__item" href="#" onclick="location='{{ route('index') }}'">Menu</a></li>
                     <li><a class="menu__item" href="href=" {{ route('logout') }} onclick="event.preventDefault();
-                            document.getElementById('logout-form').submit();">{{ 'Deconnexion' }}</a></li>
+                            document.getElementById('logout-form').submit();">{{ 'Déconnexion' }}</a></li>
                 </ul>
             </div>
             <label class="titreHistorique">Historique</label>

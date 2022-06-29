@@ -43,6 +43,8 @@
     </header>
     </div>
     </nav>
+    <label class="titre">Connexion</label>
+</div>
 
     <main class="py-4">
         <?php echo $__env->yieldContent('content'); ?>
@@ -95,8 +97,8 @@ unset($__errorArgs, $__bag); ?>" name="password" required
                                 <?php echo e(__('Connexion')); ?>
 
                             </button>
-                            <?php if(Route::has('forget.password.get')): ?>
-                            <a class="btn btn-link" href="<?php echo e(route('forget.password.get')); ?>">
+                            <?php if(Route::has('password.request')): ?>
+                            <a class="bouton" style="margin:auto auto; display:block; text-decoration: none ; color:black; href="<?php echo e(route('password.request')); ?>">
                                 <?php echo e(__('Mot de passe oublié?')); ?>
 
                             </a>

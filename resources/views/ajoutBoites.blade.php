@@ -37,7 +37,7 @@
                 <ul class="menu__box">
                     <li><a class="menu__item" href="#" onclick="location='{{ route('index') }}'">Menu</a></li>
                     <li><a class="menu__item" href="href=" {{ route('logout') }} onclick="event.preventDefault();
-                        document.getElementById('logout-form').submit();">{{ 'Deconnexion' }}</a></li>
+                        document.getElementById('logout-form').submit();">{{ 'Déconnexion' }}</a></li>
                 </ul>
             </div>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
@@ -49,10 +49,10 @@
     <form method="post" action="{{ action('App\Http\Controllers\LocalisationController@creerBoite') }}"
         enctype="multipart/form-data">
         @csrf
-        <h1 class="titre">Localisation du materiel</h1>
+        <h1 class="titre">Création de boites</h1>
         <div style="margin-left: 2%; margin-right: 2%;">
             <div class="dropdown">
-                <label for="cat">Categorie:</label>
+                <b><label for="cat">Catégorie:</label></b>
                 <br>
                 <select id="categorie" name="categorie" class="btn btn-secondary dropdown-toggle">
                     <option value="" selected disabled>Selectionner une categorie</option>
@@ -63,14 +63,14 @@
             </div>
             <!-- Dropdown sous-categories-->
             <div class="dropdown">
-                <label for="cat2">Sous categorie:</label>
+                <b><label for="cat2">Sous catégorie:</label></b>
                 <br>
                 <select name="subcat" id="subcat" class="btn btn-secondary dropdown-toggle">
                 </select>
             </div>
             <!-- Dropdown sous-categories2-->
             <div class="dropdown">
-                <label for="cat3">Sous categorie 2:</label>
+                <b><label for="cat3">Sous catégorie 2:</label></b>
                 <br>
                 <select name="subcat2" id="subcat2" class="btn btn-secondary dropdown-toggle">
                 </select>
@@ -90,44 +90,52 @@
             <br>
             <!--Dropdown Batiment-->
             <div class="dropdown">
-                <label for="bat">Batiment :</label>
+                <b><label for="bat">Batiment :</label></b>
                 <br>
                 <select name="batiment" id="batiment_id" class="btn btn-secondary dropdown-toggle">
-                    <option value="" selected disabled>Selectionner un batiment</option>
-                    @foreach ($batiments as $bat => $batiment)
-                        <option value="{{ $bat }}"> {{ $batiment }}</option>
+                    <option value="-1" selected disabled>Selectionner un batiment</option>
+
+                    @foreach ($batiments as $bat)
+                    <option value="{{ $bat->id }}" title="{{ $bat->cheminImage }}">{{ $bat->nom }}</option>
+
                     @endforeach
+
+
                 </select>
             </div>
 
             <!-- Dropdown salle-->
             <div class="dropdown">
-                <label for="salle">Salle :</label>
+                <b><label for="salle">Salle :</label></b>
                 <br>
                 <select name="salle" id="salle_id" class="btn btn-secondary dropdown-toggle"></select>
             </div>
             <!-- Dropdown zone-->
             <div class="dropdown">
-                <label for="zone">Zone :</label>
+                <b><label for="zone">Zone :</label></b>
                 <br>
                 <select name="zone" id="zone_id" class="btn btn-secondary dropdown-toggle"></select>
             </div>
-            <br><br>
-            <div class="centre">
-                <label for="ObjectSelected">Action : </label>
+            <div>
+                <b><label for="Quantité">Quantité :     </label></b>
+                <label for="" id="qMax">(Max : )</label>
                 <br>
-                <textarea name="ObjectSelected" id="ObjectSelected" cols="30" rows="3" readonly class="bolder"></textarea>
+                <input type='number' id='quantite' name='quantite' value='1' min='1' max="MyVar" required>
             </div>
             <div class="centre">
-                <label for="Quantité">Quantité : </label>
+                <button  class="bouton" type="submit" style="margin: auto auto">Créer boite</button>
+            </div>
                 <br>
-                <input type='number' id='quantite' name='quantite' value='1' min='1' max='100' required>
+            <img src="" alt="Pas d'image" id="imageSelection">
 
-            </div>
-            <br>
-            <div class="centre">
-                <button type="submit" class="bouton" name="send" style="margin: auto auto">Creer boite</button>
-            </div>
+                <textarea name="quantiteMax" id="quantiteMax" cols="30" rows="1" style="display:none;"></textarea>
+                <br>
+                <textarea name="Nouvellequantite" id="Nouvellequantite" cols="30" rows="1" style="display:none;"></textarea>
+
+
+
+
+
 
         </div>
     </form>
@@ -306,11 +314,32 @@
 
             //affiche sur la console la valeur de la selection du dropdown des produits
             $('#produit_id').change(function() {
-                var idProd = $(this).val();
+                var idProd = $('#produit_id').val();
                 console.log(idProd);
 
+                if(idProd){
+                    $.ajax({
+                        type: "GET",
+                        url: "{{ url('getQuantite') }}?id=" + idProd,
+                        success: function(res) {
+                        console.log(res);
+                        var Quant =res;
+                        var input = document.getElementById("quantite");
+                        input.setAttribute("max",Quant); //set a new value;
+                        $('#qMax').empty();
+                        $('#qMax').append("(Max: " +Quant+")");
+                        $('#quantiteMax').append(Quant);
+                        var newQuant = Quant - $('#quantite').val();
+                        $('#Nouvellequantite').empty();
+                        $('#Nouvellequantite').append(newQuant);
 
 
+                        }
+                    });
+
+                } else {
+
+                }
 
             });
 
@@ -323,35 +352,40 @@
                 console.log(batID);
 
                 // Fonction qui permet de charger les salles qui appartiennent au batiment choisi
-                if (batID) {
+                if (batID!="-1") {
+                    var srcImg=$("#batiment_id option:selected").attr("title");
+                    console.log(srcImg);
+                    $("#imageSelection").attr('src',"{{ url('') }}"+srcImg);
 
                     $.ajax({
                         type: "GET",
                         url: "{{ url('getSalle') }}?id=" + batID,
                         success: function(res) {
 
-                            if (res) {
+
                                 $("#salle_id").empty();  // vide le dropdown des salles
                                 //Ajout des salles qui correspondent à la selection
                                 $("#salle_id").append(
                                     '<option>Selectionner une salle</option>');
                                 $.each(res,
-                                    function(bat, value) {
-                                        $("#salle_id").append('<option value="' + bat +
-                                            '">' + value + '</option>');
+                                    function(index, obj) {
+                                        console.log(obj);
+
+                                        $("#salle_id").append('<option value="' + obj.id +
+                                            '" title="'+obj.cheminImage+'">' + obj.nom + '</option>');
                                     });
 
-                            } else {
 
-                                $("#salle_id").empty();  // vide le dropdown des salles
-                            }
                         }
                     });
+
+
 
                 } else {
                     $("#salle_id").empty();  // vide le dropdown des salles
                     $("#zone_id").empty();  // vide le dropdown des zones
                 }
+
 
             });
 
@@ -364,28 +398,33 @@
                 console.log(salleID);
 
                 // Fonction qui permet de charger les zones qui appartiennent à la salle choisie
-                if (salleID) {
+                if (salleID!="-1") {
+                    var srcImg=$("#salle_id option:selected").attr("title");
+                    console.log(srcImg);
+                    $("#imageSelection").attr('src',"{{ url('') }}"+srcImg);
 
                     $.ajax({
                         type: "GET",
                         url: "{{ url('getZone') }}?id=" + salleID,
                         success: function(res) {
 
-                            if (res) {
+
 
                                 $("#zone_id").empty();  // vide le dropdown des zones
                                 //Ajout des zones qui correspondent à la selection
                                 $("#zone_id").append(
                                     '<option>Selectionner une zone</option>');
 
-                                res.forEach(element => {
-                                    $("#zone_id").append('<option value="' + element
-                                        .id + '">' + element.nom + '</option>');
-                                });
-                            } else {
 
-                                $("#zone_id").empty(); // vide le dropdown des zones
-                            }
+                                $.each(res,
+                                    function(index, obj) {
+                                        console.log(obj);
+
+                                        $("#zone_id").append('<option value="' + obj.id +
+                                            '" title="'+obj.cheminLocalisation+'">' + obj.nom + '</option>');
+                                    });
+
+
                         }
                     });
 
@@ -396,8 +435,14 @@
             });
 
             $('#zone_id').change(function() {
-                var idzone = $(this).val();
-                console.log(idzone);
+                var srcImg=$("#zone_id option:selected").attr("title");
+                    console.log(srcImg);
+                    $("#imageSelection").attr('src',"{{ url('') }}"+srcImg);
+            });
+            $('#quantite').change(function(){
+                var newQ = $('#quantiteMax').val() - $('#quantite').val();
+                $('#Nouvellequantite').empty();
+                $('#Nouvellequantite').append(newQ);
             });
         });
     </script>

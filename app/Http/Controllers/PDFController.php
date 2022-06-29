@@ -106,7 +106,7 @@ class PDFController extends Controller
         }
 
 
-        return view('QrCode/qrCode', ['boitesProduits' => $boitesProduits]);
+        //return view('QrCode/qrCode', ['boitesProduits' => $boitesProduits]);
         $render=view('QrCode/qrCode', ['boitesProduits' => $boitesProduits])->render();
 
         $pdf = new Pdf($render);

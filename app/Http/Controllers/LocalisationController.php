@@ -11,6 +11,8 @@ use App\DataTables\ProduitsDataTable;
 use App\DataTables\FournisseursDataTable;
 use App\Helper\Helper as HelperHelper;
 use App\Models\Batiment;
+use App\Models\Salle;
+use App\Models\Zone;
 use Illuminate\Support\Facades\DB;
 use App\Models\Boite;
 
@@ -20,16 +22,19 @@ class LocalisationController extends Controller
     public $salles;
     public $zones;
     public $produits;
+    public $quantite;
     public $categories1;
     public $categories2;
     public $categories3;
     public $boite;
+    public $nouvelleQauntite;
+    public $img;
 
     public function index()
     {
 
         $produits =DB::table("produits")
-        ->pluck("nom", "id");
+        ->pluck("nom", "id","quantite");
 
         $batiments = DB::table('batiments')
         ->pluck("nom","id");
@@ -43,15 +48,16 @@ class LocalisationController extends Controller
     public function localisation()
     {
         $produits =DB::table("produits")
-        ->pluck("nom", "id");
+        ->pluck("nom", "id","quantite");
 
         $categories1 = DB::table("categories")->where("niveau", "=", 1)->pluck("nom", "id");
 
-        $batiments = DB::table('batiments')->pluck("nom","id");
-        $salles = DB::table('salles')->pluck("nom","id");
-        $zones = DB::table('zones')->pluck("nom","id");
+        //$batiments = DB::table('batiments')->pluck("nom","id","cheminImage");
+        $batiments=Batiment::select('id','nom','cheminImage')->get();
+        //$salles = DB::table('salles')->pluck("nom","id");
+        //$zones = DB::table('zones')->pluck("nom","id");
 
-        return View('ajoutBoites', compact('categories1','produits','batiments','salles','zones'));
+    return View('ajoutBoites', compact('categories1','produits','batiments'/*,'salles','zones'*/));
     }
 
 
@@ -67,19 +73,23 @@ class LocalisationController extends Controller
     public function getSalle(request $request)
     {
 
-        $salles = DB::table('salles')->where("batiment_id", "=", $request->id)->pluck("nom","id","coordPoint");
+        $salles = Salle::select("nom","id","cheminImage")->where("batiment_id", "=", $request->id)->get();
         return response()->json($salles);
     }
 
     public function getZone(request $request)
     {
 
-        $zones = DB::table('zones')->where("salle_id", "=","1")->select("nom","id")->get();
+        $zones = Zone::select("nom","id","cheminLocalisation")->where("salle_id", "=",$request->id)->get();
 
         return response()->json($zones);
 
     }
+    public function getImgBat(request $request){
 
+    $img = DB::table('batiments')->where("id","=",$request->id)->pluck("cheminImage");
+    return response($img);
+    }
 
 
 
@@ -111,9 +121,14 @@ class LocalisationController extends Controller
     }
     public function getProd(Request $request)
     {
-        $produits = DB::table("produits")->select(["nom","id"])->where("categorie_id", "=", $request->id);
+        $produits = DB::table("produits")->select(["nom","id","quantite"])->where("categorie_id", "=", $request->id);
 
         return view("ajoutBoites", compact('produits'));
+    }
+    public function getQuantite(Request $request)
+    {
+        $quantite = DB::table("produits")->where("id", "=" , $request->id )->pluck("quantite");
+        return response()->json($quantite);
     }
     public function creerBoite(Request $request)
     {
@@ -121,7 +136,10 @@ class LocalisationController extends Controller
 
 
         Boite::insert(["produit_id"=>$request->produit, "zone_id"=>$request->zone, "quantite"=>$request->quantite]);
+        //$produits = Produit::find($request->produit);
+        //$produits->quantite = $request->Nouvellequantite;
 
+        Db::table("produits")->where("id", "=" , $request->produit)->update(['quantite' => $request->Nouvellequantite]);
         return view('GestionBoites');
     }
 
@@ -145,7 +163,7 @@ class LocalisationController extends Controller
         $boite = Boite::find($id);
         $categories1 = DB::table("categories")->where("niveau", "=", 1)->pluck("nom", "id");
         $produits =DB::table("produits")->pluck("nom", "id");
-        $batiments = DB::table('batiments')->pluck("nom","id");
+        $batiments=Batiment::select('id','nom','cheminImage')->get();
 
         return View('modifBoites',compact('boite','categories1','produits','batiments'));
 
